@@ -1,0 +1,23 @@
+{
+  "autoload": {
+    "psr-4": {
+      "app\\": "app/"
+    }
+  },
+  "require": {
+    "monolog/monolog": "2.2.0",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "twig/twig": "^3.0",
+    "twbs/bootstrap": "5.3.3"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "1.10.60",
+    "phpunit/phpunit": "^11.0.6"
+  },
+  "scripts": {
+    "phpstan-min": "vendor/bin/phpstan analyse -l3 app",
+    "phpstan-dop": "vendor/bin/phpstan analyse -l5 app",
+    "phpstan-max": "vendor/bin/phpstan analyse -l9 app"
+  }
+}

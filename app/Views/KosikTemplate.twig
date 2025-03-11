@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="cs">
+
+<body>
+
+<main>
+
+    <!-- Dorucovaci udaje modal -->
+    <div class="modal fade" id="sendModal" tabindex="-1" aria-labelledby="sendModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Doručovací údaje</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="row g-3 container mb-3 mt-2">
+                    <!-- Jmeno txt pole -->
+                    <div class="col-sm-6">
+                        <label for="firstName" class="form-label">First name</label>
+                        <input type="text" class="form-control" id="firstName" name="jmeno" value="" required>
+                    </div>
+                    <!-- Primeni txt pole -->
+                    <div class="col-sm-6">
+                        <label for="lastName" class="form-label">Last name</label>
+                        <input type="text" class="form-control" id="lastName" name="primeni" value="" required>
+                    </div>
+                    <!-- Ulice txt pole -->
+                    <div class="col-md-5">
+                        <label for="ulice" class="form-label">Ulice</label>
+                        <input type="text" class="form-control" id="ulice" name="ulice" required>
+                    </div>
+                    <!-- Popisne cislo txt pole -->
+                    <div class="col-md-4">
+                        <label for="cislopopisne" class="form-label">Číslo popisné</label>
+                        <input type="text" class="form-control" id="cislopopisne" name="cislo_popisne" required>
+                    </div>
+                    <!-- Orijentacni cislo txt pole -->
+                    <div class="col-md-3">
+                        <label for="orijentacnicislo" class="form-label">Orientační číslo</label>
+                        <input type="text" class="form-control" id="orijentacnicislo" name="orientacni_cislo" required>
+                    </div>
+                    <!-- PSC txt pole -->
+                    <div class="col-sm-4">
+                        <label for="psc" class="form-label">PSČ</label>
+                        <input type="text" class="form-control" id="psc" name="psc" required>
+                    </div>
+                    <!-- Mesto txt pole -->
+                    <div class="col-sm-8">
+                        <label for="mesto" class="form-label">Město</label>
+                        <input type="text" class="form-control" id="mesto" name="mesto" required>
+                    </div>
+                    <!-- Phone txt pole -->
+                    <div class="col-sm-6">
+                        <label for="phone" class="form-label">Telefonní číslo</label>
+                        <input type="text" class="form-control" id="phone" name="telefonni_cislo" value="" required>
+                    </div>
+                </div>
+                <!-- Footer btns -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="button" id="odeslat" class="btn btn-warning" data-bs-dismiss="modal" value="Odeslat Objednávku" data-kosik-id="{{ kosik.id_objednavka }}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kosik -->
+    <section class="py-5 mt-5">
+        <div class="container">
+            <div class="row justify-content-center mb-12">
+                <div class="col-xl-10 col-xl-12">
+                    <div class="card shadow-sm mb-3 p-3 d-flex flex-column" style="min-height: 85vh;">
+                        <!-- Produkty kosiku -->
+                        {% if kosikProducts|length > 0 %}
+                            <div class="flex-grow-1 mb-5" style=" padding-bottom: 1rem;">
+                                {% for product in kosikProducts %}
+                                    <div id="product{{ product.id_produkt }}" class="card rounded-3 mb-4">
+                                        <div class="card-body p-4">
+                                            <!-- Obrazek produktu -->
+                                            <div class="row d-flex justify-content-between align-items-center">
+                                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                                    <img src="{{ 'app/images/' ~ (product.photo | default('default-image.jpg')) }}"
+                                                         alt="{{ product.nazev }}"
+                                                         class="bd-placeholder-img card-img-top"
+                                                         style="width: auto; height: 5svw; object-fit: cover;">
+                                                </div>
+                                                <!-- Nazev produktu -->
+                                                <div class="col-md-3 col-lg-3 col-xl-3">
+                                                    <h5 class="card-title mb-0">{{ product.nazev }}</h5>
+                                                </div>
+                                                <!-- Mnozstvi produktu -->
+                                                <div id="quantityControl{{ product.id_produkt }}" class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                                    <div class="quantity-control d-flex align-items-center">
+                                                        <input type="hidden" value="{{ product.id_produkt }}">
+                                                        <!-- Odebrani btn -->
+                                                        <button id="btnMinus{{ product.id_produkt }}" type="button" class="btn btn-warning px-2 btn-minus">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-lg">
+                                                                <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8"/>
+                                                            </svg>
+                                                        </button>
+                                                        <!-- txt pole -->
+                                                        <div class="mx-2 d-flex align-items-center">
+                                                            <label for="quantity{{ product.id_produkt }}"></label><input id="quantity{{ product.id_produkt }}"
+                                                                                                                         type="number"
+                                                                                                                         min="0"
+                                                                                                                         class="form-control form-control-lg text-center"
+                                                                                                                         style="width: 80px;"
+                                                                                                                         value="{{ product.pocet }}">
+                                                        </div>
+                                                        <!-- Pridani btn -->
+                                                        <button id="btnPlus{{ product.id_produkt }}" type="button" class="btn btn-warning px-2 btn-plus">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg">
+                                                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <!-- Produktova cena -->
+                                                <div id="productTotal{{ product.id_produkt }}" class="col-md-3 col-lg-2 col-xl-2 offset-lg-1 text-end">
+                                                    <h5 class="mb-0 text-success">{{ product.pocet * product.cena }} Kč</h5>
+                                                </div>
+
+                                                <!-- Odebrat btn -->
+                                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                                    <button type="button" id="smazat" class="btn btn-link text-danger" data-product-id="{{ product.id_produkt }}">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <!-- Kosik bottom -->
+                            <div class="sticky-bottom bg-white pt-3">
+                                <hr class="my-4">
+                                <!-- Total cena -->
+                                <div class="text-end">
+                                    <h4>Subtotal:</h4>
+                                    <h1 id="orderTotal">{{ totalPrice }} Kč</h1>
+                                </div>
+
+                                <!-- Odeslat btn -->
+                                <div class="row mt-4 d-flex align-items-end">
+                                    <div class="col-sm-6 order-md-2 text-end">
+                                        <input type="button" data-bs-toggle="modal" class="btn btn-warning mb-4 btn-lg" value="Odeslat" data-bs-target="#sendModal">
+                                    </div>
+                                    <div class="col-sm-6 mb-3 order-md-1 text-md-left">
+                                        <a href="/index.php?page=Home">
+                                            <i class="fas fa-arrow-left mr-2"></i> Pokračovat v nákupu
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <!-- Prazdny kosik handler -->
+                        {% else %}
+
+                            <div id="error_kosik" class="d-flex justify-content-center align-items-center flex-column" style="height: 100%;">
+                                <h3>HMM...</h3>
+                                <p>Vypadá to, že košík je prázdný.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

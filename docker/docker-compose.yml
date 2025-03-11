@@ -1,0 +1,49 @@
+version: '3.8'
+name: oks-web-docker
+services:
+  php-apache:
+    container_name: OKS_WEB_apache
+    image: registry.gitlab-vyuka.kiv.zcu.cz/oks-web/images/php-apache/php83:latest
+    working_dir: /htdocs
+    volumes:
+      - ../:/htdocs
+    ports:
+      - "80:80"   # http
+    links:
+      - database
+    depends_on:
+      - database
+
+  database:
+    image: mariadb:11.3.2
+    container_name: OKS_WEB_mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: super_tajne_root_heslo_123
+      MYSQL_DATABASE: oks-web
+
+  phpmyadmin:
+    container_name: OKS_WEB_phpmyadmin
+    image: phpmyadmin:5.2.1
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: super_tajne_root_heslo_123
+    links:
+      - database
+    depends_on:
+      - database
+
+  node:
+    image: registry.gitlab-vyuka.kiv.zcu.cz/oks-web/images/node/node:latest
+    container_name: OKS_WEB_node
+    volumes:
+      - ../:/htdocs
+    working_dir: /htdocs
+    command: sh -c "npm install" # Customize this command based on your needs
+    depends_on:
+      - php-apache
+

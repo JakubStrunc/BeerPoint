@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="cs">
+
+<body>
+
+<main>
+    <!-- Sprava objednavek -->
+    <section class="mt-5 py-5">
+        <div class="container">
+            <div class="row justify-content-center mb-12">
+                <div class="col-xl-10 col-xl-12">
+                    <div class="card shadow-sm mb-3 p-3 d-flex flex-column" style="min-height: 85vh; max-height: 80vh">
+                        <div class="flex-grow-1 overflow-auto mb-5">
+                            <!-- Tabulka objednavek -->
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Číslo objednávky</th> <!-- Cislo objednavky -->
+                                    <th scope="col">Jméno</th> <!-- Jmeno -->
+                                    <th scope="col">Příjmení</th> <!-- Prijmeni -->
+                                    <th scope="col">Adresa</th> <!-- Adresa -->
+                                    <th scope="col">Stav</th> <!-- Stav objednavky -->
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- Objednavka -->
+                                {% for order in orders %}
+                                    <tr>
+                                        <th>{{ order.id_objednavka }}</th> <!-- ID objednavky -->
+                                        <td>{{ order.jmeno }}</td> <!-- Jmeno -->
+                                        <td>{{ order.prijmeni }}</td> <!-- Prijmeni -->
+                                        <td>
+                                            <!-- Adresa -->
+                                            {{ order.ulice }} {{ order.cislo_popisne }}/{{ order.orientacni_cislo }}, {{ order.psc }}, {{ order.mesto }}
+                                        </td>
+                                        <td>
+                                            <!-- DrapDown Stavu -->
+                                            <select name="stav" class="form-select-sm update-status" aria-label="Select State" data-order-id="{{ order.id_objednavka }}">
+                                                <option value="zpracovává se" {% if order.stav == 'zpracovává se' %}selected{% endif %}>Zpracovává se</option>
+                                                <option value="odesláno" {% if order.stav == 'odesláno' %}selected{% endif %}>Odesláno</option>
+                                                <option value="doručeno" {% if order.stav == 'doručeno' %}selected{% endif %}>Doručeno</option>
+                                                <option value="zrušeno" {% if order.stav == 'zrušeno' %}selected{% endif %}>Zrušeno</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <!-- Detaily btn -->
+                                            <a href="#" class="text-warning fw-bold" data-bs-toggle="collapse" data-bs-target="#order{{ order.id_objednavka }}" style="font-size: 24px;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <!-- Produkty objednavky -->
+                                    <tr class="collapse" id="order{{ order.id_objednavka }}">
+                                        <td colspan="6">
+                                            <div class="card card-body">
+                                                <h6>Produkty objednávky:</h6>
+                                                <table class="table">
+                                                    <tbody>
+                                                    <!-- Produkt objednavky -->
+                                                    {% for product in order.products %}
+                                                        <tr>
+                                                            <!-- Fotka produktu -->
+                                                            <td>
+                                                                <img src="{{ 'app/images/' ~ product.photo | default('path/to/default-image.jpg') }}" alt="{{ product.nazev }}" class="bd-placeholder-img card-img-top" style="width: auto; height: 150px; object-fit: cover;">
+                                                            </td>
+                                                            <!-- Nazev produktu -->
+                                                            <td>
+                                                                <h5 class="card-title mt-5">{{ product.nazev }}</h5>
+                                                            </td>
+                                                            <!-- Mnozstvi produktu -->
+                                                            <td>
+                                                                <p class="card-text fw-bold mt-5">{{ product.pocet }} x {{ product.cena }} Kč</p>
+                                                            </td>
+                                                            <!-- Celkova cena produktu -->
+                                                            <td>
+                                                                <p class="card-text text-success fw-bold mt-5 text-end" style="padding-right: 20px;">{{ product.pocet * product.cena }} Kč</p>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    <!-- Total cena objednavky -->
+                                                    <tr>
+                                                        <td colspan="3"></td>
+                                                        <td class="text-success fw-bold text-end me-5" style="font-size: 1.2em; padding-right: 20px;">Celkem: {{ order.totalPrice }} Kč</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '#If condition is always true.#'
+        -
+            message: '#Constant WEB_PAGES not found.#'
+        -
+            message: '#Constant DEFAULT_WEB_PAGE_KEY not found.#'
+        -
+            message: '#Constant DIR_LOGY not found.#'

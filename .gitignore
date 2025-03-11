@@ -1,0 +1,5 @@
+.idea/
+/vendor/
+/Monolog/
+/Psr/
+app/Config/env.inc.php
